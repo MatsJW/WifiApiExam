@@ -22,6 +22,7 @@ builder.Services.AddScoped<IImportService, ImportService>();
 
 var app = builder.Build();
 
+app.UseSwagger();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -29,16 +30,16 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-using (var scope = app.Services.CreateScope())
-{
-    var priceImportService = scope.ServiceProvider.GetRequiredService<IImportService>();
-
-    // Specify your directory path
-    string directoryPath = @"C:\Users\matsj\RiderProjects\WifiAPIExam\WifiAPIExam\wifi-usage-2025-04";
-
-    // Run the import asynchronously
-    await priceImportService.ImportFromDirectoryAsync(directoryPath);
-}
+// using (var scope = app.Services.CreateScope())
+// {
+//     var priceImportService = scope.ServiceProvider.GetRequiredService<IImportService>();
+//
+//     // Specify your directory path
+//     string directoryPath = @"C:\Users\matsj\RiderProjects\WifiAPIExam\WifiAPIExam\wifi-usage-2025-04";
+//
+//     // Run the import asynchronously
+//     await priceImportService.ImportFromDirectoryAsync(directoryPath);
+// }
 
 app.UseHttpsRedirection();
 
