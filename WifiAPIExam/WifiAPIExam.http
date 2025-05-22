@@ -1,0 +1,6 @@
+@WifiAPIExam_HostAddress = http://localhost:5085
+
+GET {{WifiAPIExam_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
