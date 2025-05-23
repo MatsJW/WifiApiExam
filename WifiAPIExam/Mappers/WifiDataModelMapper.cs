@@ -9,7 +9,7 @@ public static class WifiDataModelMapper
         return new WifiDataModel
         {
             VoucherId = int.Parse(dto.VoucherId),
-            ShipId = dto.ShipId,
+            ShipId = int.Parse(dto.ShipId),
             SellTime = ParseDateTimeOrDefault(dto.SellTime),
             ActivationTime = ParseDateTimeOrDefault(dto.ActivationTime),
             Price = decimal.Parse(dto.Price),

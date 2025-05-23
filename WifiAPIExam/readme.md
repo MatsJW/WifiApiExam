@@ -10,3 +10,5 @@ dotnet ef database update
 ```sql
 SELECT * FROM "WifiDatabase";
 ````
+
+TRUNCATE TABLE "WifiDatabase" RESTART IDENTITY;

@@ -7,7 +7,7 @@ public class WifiDataModel
 {
     [Key]
     public required int VoucherId { get; set; }
-    public required string ShipId { get; set; }
+    public required int ShipId { get; set; }
     public required DateTime SellTime { get; set; }
     public required DateTime ActivationTime { get; set; }
     public required decimal Price { get; set; }
