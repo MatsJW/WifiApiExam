@@ -7,9 +7,11 @@ namespace WifiAPIExam.Services;
 public class ImportService :IImportService
 {
     private readonly Database.WifiDbContext _context;
+    private readonly ILogger<ImportService> _logger;
 
-    public ImportService(Database.WifiDbContext context)
+    public ImportService(Database.WifiDbContext context , ILogger<ImportService> logger)
     {
+        _logger = logger;
         _context = context;
     }
     
@@ -21,7 +23,7 @@ public class ImportService :IImportService
         foreach (var filePath in jsonFiles)
         {
             var fileName = Path.GetFileNameWithoutExtension(filePath);
-            Console.WriteLine($"Processing file: {fileName}");
+            _logger.LogInformation($"Processing file: {fileName}");
             
             // Read the entire JSON file
             var fileContent = await File.ReadAllTextAsync(filePath);
@@ -31,7 +33,7 @@ public class ImportService :IImportService
 
             if (wifiDataDtos is null)
             {
-                Console.WriteLine("Deserialization failed or file was empty.");
+                _logger.LogWarning($"Failed to deserialize file: {fileName}. File may be empty or invalid.");
                 continue; // Skip if deserialization failed or file was empty
             }
 

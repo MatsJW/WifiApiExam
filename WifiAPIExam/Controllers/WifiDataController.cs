@@ -6,7 +6,7 @@ using WifiAPIExam.Models;
 namespace WifiAPIExam.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("Wifi")]
 public class WifiDataController : ControllerBase
 {
     private readonly ILogger<WeatherForecastController> _logger;
@@ -18,7 +18,7 @@ public class WifiDataController : ControllerBase
         _logger = logger;
     }
     
-    [HttpGet(Name = "GetWifiData")]
+    [HttpGet("HourlyReport")]
     public async Task<ActionResult<IEnumerable<GetSumPerHourResponseModel>>> GetSumPerHour(
         [FromQuery] string startDate,
         [FromQuery] string endDate,
@@ -29,13 +29,14 @@ public class WifiDataController : ControllerBase
         if (!DateTime.TryParse(endDate, out var ed))
             return BadRequest("Invalid end date format. Use 'yyyy-MM-dd' or 'yyyy-MM-ddTHH:mm:ssZ' format.");
 
+        // after parsing and specifying kind
         var start = DateTime.SpecifyKind(sd, DateTimeKind.Utc);
-        var end   = DateTime.SpecifyKind(ed, DateTimeKind.Utc);
+        var end   = DateTime.SpecifyKind(ed, DateTimeKind.Utc).Date.AddDays(1);
 
         var hourlyData = await _context.WifiDatabase
             .Where(w => w.ShipId == shipId
                         && w.SellTime >= start
-                        && w.SellTime <= end)
+                        && w.SellTime <  end)         // use '<' with end moved to next midnight
             .GroupBy(w => new {
                 w.SellTime.Year,
                 w.SellTime.Month,
@@ -49,6 +50,10 @@ public class WifiDataController : ControllerBase
                 g.Key.Hour,
                 Sum = (int)g.Sum(x => x.Price)
             })
+            .OrderBy(x => x.Year)
+            .ThenBy(x => x.Month)
+            .ThenBy(x => x.Day)
+            .ThenBy(x => x.Hour)
             .ToListAsync();
 
         var result = hourlyData.Select(item => {
