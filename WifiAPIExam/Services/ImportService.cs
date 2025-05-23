@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using WifiAPIExam.Mappers;
+using Microsoft.EntityFrameworkCore;
 using WifiAPIExam.Models;
 
 namespace WifiAPIExam.Services;
@@ -17,6 +17,7 @@ public class ImportService :IImportService
     
     public async Task ImportFromDirectoryAsync(string directoryPath)
     {
+        var allShipIds = new HashSet<int>();
         // Get all JSON files in the specified directory
         var jsonFiles = Directory.GetFiles(directoryPath, "*.json", SearchOption.TopDirectoryOnly);
 
@@ -39,14 +40,25 @@ public class ImportService :IImportService
 
             // Map DTOs to Models
             var wifiData = wifiDataDtos
-                .Select(WifiDataModelMapper.MapToModel)
+                .Select(dto => dto.MapToModel())
                 .ToList();
+            allShipIds.UnionWith(wifiData.Select(w => w.ShipId));
             
             // Add all new records to EF Core tracking
             _context.WifiDatabase.AddRange(wifiData);
         }
 
+        // Insert new ShipIds into ShipIds table
+        var existingIds = await _context.ShipIds
+            .Where(s => allShipIds.Contains(s.ShipId))
+            .Select(s => s.ShipId)
+            .ToListAsync();
+        var newIds = allShipIds.Except(existingIds)
+            .Select(id => new WifiShipIdModel { ShipId = id });
+        _context.ShipIds.AddRange(newIds);
+
         // Save changes to the database
         await _context.SaveChangesAsync();
     }
 }
+

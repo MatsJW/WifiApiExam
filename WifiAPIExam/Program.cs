@@ -39,7 +39,6 @@ if (app.Environment.IsDevelopment())
 //
 //     // Run the import asynchronously
 //     await priceImportService.ImportFromDirectoryAsync(dir);
-// }
 
 // maybe use as a first run kinda thing?
 // if (db.Database.EnsureCreated())
@@ -48,6 +47,8 @@ if (app.Environment.IsDevelopment())
 //     string dir = Path.Combine(Directory.GetCurrentDirectory(), "wifi-usage-2025-04");
 //     await importSvc.ImportFromDirectoryAsync(dir);
 // }
+// }
+
 
 app.UseHttpsRedirection();
 

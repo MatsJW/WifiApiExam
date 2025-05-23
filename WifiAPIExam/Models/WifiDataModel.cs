@@ -6,32 +6,32 @@ namespace WifiAPIExam.Models;
 public class WifiDataModel
 {
     [Key]
-    public required int VoucherId { get; set; }
-    public required int ShipId { get; set; }
-    public required DateTime SellTime { get; set; }
-    public required DateTime ActivationTime { get; set; }
-    public required decimal Price { get; set; }
-    public required string Currency { get; set; }
-    public required string Billing { get; set; }
-    public required string Category { get; set; }
-    public required int DataSentKB { get; set; }
-    public required int DataReceivedKB { get; set; }
-    public required string CreditCardCountry { get; set; }
-    public required int Devices { get; set; }
-    public required int VolumeQuotaMB { get; set; }
-    public required int TimeQuotaMinutes { get; set; }
-    public required decimal Fees { get; set; }
-    public required decimal PriceNok { get; set; }
-    public required int RefundNok { get; set; }
-    public required DateTime RefundTime { get; set; }
-    public required string VatCountry { get; set; }
-    public required DateTime UpdatedTime { get; set; }
-    public required string DepartureCc { get; set; }
-    public required string DestinationCc { get; set; } 
-    public required string ActivationCc { get; set; }
-    public required int UniqueToday { get; set; }
-    public required int UniqueThisMonth { get; set; }
-    public required bool Completed { get; set; }
+    public int VoucherId { get; set; }
+    public int ShipId { get; set; }
+    public DateTime SellTime { get; set; }
+    public DateTime ActivationTime { get; set; }
+    public decimal Price { get; set; }
+    public string Currency { get; set; }
+    public string Billing { get; set; }
+    public string Category { get; set; }
+    public int DataSentKB { get; set; }
+    public int DataReceivedKB { get; set; }
+    public string CreditCardCountry { get; set; }
+    public int Devices { get; set; }
+    public int VolumeQuotaMB { get; set; }
+    public int TimeQuotaMinutes { get; set; }
+    public decimal Fees { get; set; }
+    public decimal PriceNok { get; set; }
+    public int RefundNok { get; set; }
+    public DateTime RefundTime { get; set; }
+    public string VatCountry { get; set; }
+    public DateTime UpdatedTime { get; set; }
+    public string DepartureCc { get; set; }
+    public string DestinationCc { get; set; } 
+    public string ActivationCc { get; set; }
+    public int UniqueToday { get; set; }
+    public int UniqueThisMonth { get; set; }
+    public bool Completed { get; set; }
 }
 
 // {
