@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using WifiAPIExam.Configuration;
 using WifiAPIExam.Database;
 using WifiAPIExam.Services;
 
@@ -15,6 +16,9 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new() { Title = "Wifi Api", Version = "v1" });
 });
 
+builder.Services.AddOptions<AuthConfiguration>()
+    .BindConfiguration("Clerk");
+
 builder.Services.AddDbContext<WifiDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -29,6 +33,7 @@ builder.Services.AddCors(options =>
         });
 
 builder.Services.AddScoped<IImportService, ImportService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
