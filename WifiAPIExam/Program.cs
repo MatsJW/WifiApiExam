@@ -40,24 +40,19 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-// using (var scope = app.Services.CreateScope())
-// {
-//     var priceImportService = scope.ServiceProvider.GetRequiredService<IImportService>();
-//
-//     // Specify your directory path
-//     string dir = Path.Combine(Directory.GetCurrentDirectory(), "wifi-usage-2025-04");
-//
-//     // Run the import asynchronously
-//     await priceImportService.ImportFromDirectoryAsync(dir);
-
-// maybe use as a first run kinda thing?
-// if (db.Database.EnsureCreated())
-// {
-//     var importSvc = scope.ServiceProvider.GetRequiredService<IImportService>();
-//     string dir = Path.Combine(Directory.GetCurrentDirectory(), "wifi-usage-2025-04");
-//     await importSvc.ImportFromDirectoryAsync(dir);
-// }
-// }
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<WifiDbContext>();
+    var importSvc = scope.ServiceProvider.GetRequiredService<IImportService>();
+    // apply migrations
+    await db.Database.MigrateAsync();
+    // import only if no data exists
+    if (!await db.WifiDatabase.AnyAsync())
+    {
+        string dir = Path.Combine(Directory.GetCurrentDirectory(), "wifi-usage-2025-04");
+        await importSvc.ImportFromDirectoryAsync(dir);
+    }
+}
 
 app.UseCors("AllowFrontend");
 
