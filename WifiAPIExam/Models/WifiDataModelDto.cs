@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using WifiAPIExam.Database.Entities;
 
 namespace WifiAPIExam.Models;
 
@@ -36,9 +37,9 @@ public class WifiDataModelDto
     public required string Completed { get; set; }
     
     
-    public WifiDataModel MapToModel()
+    public WifiDataEntity MapToModel()
     {
-        return new WifiDataModel
+        return new WifiDataEntity
         {
             VoucherId = int.Parse(VoucherId),
             ShipId = int.Parse(ShipId),

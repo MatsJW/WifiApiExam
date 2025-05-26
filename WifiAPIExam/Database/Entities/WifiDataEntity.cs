@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WifiAPIExam.Models;
+namespace WifiAPIExam.Database.Entities;
 
-public class WifiDataModel
+public class WifiDataEntity
 {
     [Key]
     public int VoucherId { get; set; }

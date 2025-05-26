@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WifiAPIExam.Database.Entities;
 using WifiAPIExam.Models;
 
 namespace WifiAPIExam.Database;
@@ -7,15 +8,15 @@ public class WifiDbContext : DbContext
 {
     public WifiDbContext(DbContextOptions<WifiDbContext> options) : base(options) { }
 
-    public DbSet<WifiDataModel> WifiDatabase { get; set; }
-    public DbSet<WifiShipIdModel> ShipIds { get; set; }
+    public DbSet<WifiDataEntity> WifiDatabase { get; set; }
+    public DbSet<WifiShipEntity> ShipIds { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<WifiDataModel>()
+        modelBuilder.Entity<WifiDataEntity>()
             .HasIndex(w => new { w.ShipId, w.SellTime });
 
-        modelBuilder.Entity<WifiShipIdModel>()
+        modelBuilder.Entity<WifiShipEntity>()
             .HasKey(s => s.ShipId);
     }
 }

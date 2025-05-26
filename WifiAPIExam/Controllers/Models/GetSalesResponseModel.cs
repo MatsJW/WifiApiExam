@@ -13,6 +13,6 @@ public class GetSalesResponseModel
     [JsonPropertyName("shipId")]
     public int ShipId { get; set; }
 
-    [JsonPropertyName("averagePrice")]
+    [JsonPropertyName("value")]
     public double Value { get; set; }
 }

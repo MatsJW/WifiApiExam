@@ -18,6 +18,16 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<WifiDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontend", policy =>
+            {
+                policy.WithOrigins("http://localhost:5173") 
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+
 builder.Services.AddScoped<IImportService, ImportService>();
 
 var app = builder.Build();
@@ -49,6 +59,7 @@ if (app.Environment.IsDevelopment())
 // }
 // }
 
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 

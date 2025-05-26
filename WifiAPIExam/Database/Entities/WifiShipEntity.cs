@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace WifiAPIExam.Models;
+namespace WifiAPIExam.Database.Entities;
 
-public class WifiShipIdModel
+public class WifiShipEntity
 {
     [Key]
     public int ShipId { get; set; }

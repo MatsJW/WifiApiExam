@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using WifiAPIExam.Database.Entities;
 using WifiAPIExam.Models;
 
 namespace WifiAPIExam.Services;
@@ -54,7 +55,7 @@ public class ImportService :IImportService
             .Select(s => s.ShipId)
             .ToListAsync();
         var newIds = allShipIds.Except(existingIds)
-            .Select(id => new WifiShipIdModel { ShipId = id });
+            .Select(id => new WifiShipEntity { ShipId = id });
         _context.ShipIds.AddRange(newIds);
 
         // Save changes to the database
