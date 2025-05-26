@@ -103,7 +103,7 @@ public class WifiDataReportController : ControllerBase
         [FromRoute] string period,
         [FromQuery] string startDate,
         [FromQuery] string endDate,
-        [FromQuery] int shipId)
+        [FromQuery] int? shipId)
     {
         if (!Enum.TryParse<Period>(period, true, out var p))
             return BadRequest("Invalid period");
@@ -118,7 +118,7 @@ public class WifiDataReportController : ControllerBase
         bool hourly = p == Period.Hourly;
 
         var grouped = await _context.WifiDatabase
-            .Where(w => w.ShipId == shipId
+            .Where(w => (shipId == null || w.ShipId == shipId.Value)
                         && w.SellTime >= start
                         && w.SellTime <  end)
             .GroupBy(w => new {
@@ -163,7 +163,7 @@ public class WifiDataReportController : ControllerBase
             {
                 StartDate = dt.ToString("o"),
                 EndDate   = dtEnd.ToString("o"),
-                ShipId    = shipId,
+                ShipId    = shipId ?? 0,
                 Value     = count
             };
         });
