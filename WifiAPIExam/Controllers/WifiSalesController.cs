@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using WifiAPIExam.Configuration;
 using WifiAPIExam.Controllers.Models;
 using WifiAPIExam.Database;
 using WifiAPIExam.Services;

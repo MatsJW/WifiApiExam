@@ -1,0 +1,30 @@
+﻿version: "3.8"
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: wifidb
+      POSTGRES_USER: mats
+      POSTGRES_PASSWORD: mats
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  wifiapiexam:
+    build:
+      context: .
+      dockerfile: WifiAPIExam/Dockerfile
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=wifidb;Username=mats;Password=mats
+      - Clerk__SecretKey=sk_test_XJlDcS7qcr0CdnABA5uq3S7v7jZS4uNi2P4xJGIRJc
+      - Clerk__AllowedOrigin=http://localhost:5173
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres-data:

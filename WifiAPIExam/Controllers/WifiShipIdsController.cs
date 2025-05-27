@@ -1,7 +1,4 @@
-using System.Text.Json;
-using Clerk.BackendAPI;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using WifiAPIExam.Configuration;
 using WifiAPIExam.Controllers.Models;
