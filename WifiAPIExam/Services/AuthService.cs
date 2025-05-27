@@ -18,7 +18,7 @@ public class AuthService : IAuthService
     {
         var options = new AuthenticateRequestOptions(
             secretKey: _auth.Value.SecretKey,
-            authorizedParties: new string[] { "http://localhost:5173" }
+            authorizedParties: new string[] { _auth.Value.AllowedOrigin }
         );
 
         var requestState = await AuthenticateRequest.AuthenticateRequestAsync(request, options);

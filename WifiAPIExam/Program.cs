@@ -22,11 +22,14 @@ builder.Services.AddOptions<AuthConfiguration>()
 builder.Services.AddDbContext<WifiDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+var allowedOrigin = builder.Configuration.GetValue<string>("Clerk:AllowedOrigin") 
+                    ?? "http://localhost:3000";
+
 builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowFrontend", policy =>
             {
-                policy.WithOrigins("http://localhost:5173") 
+                policy.WithOrigins(allowedOrigin)
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             });
