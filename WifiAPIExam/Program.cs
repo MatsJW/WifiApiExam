@@ -34,6 +34,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<IImportService, ImportService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IRolesService, RolesService>();  
 
 var app = builder.Build();
 

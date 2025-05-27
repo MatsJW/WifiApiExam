@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WifiAPIExam.Controllers.Models;
 using WifiAPIExam.Database;
+using WifiAPIExam.Services;
 
 namespace WifiAPIExam.Controllers;
 
@@ -10,8 +11,16 @@ namespace WifiAPIExam.Controllers;
 public class WifiDataUsageController : ControllerBase
 {
     private readonly WifiDbContext _context;
-    public WifiDataUsageController(WifiDbContext context) 
-        => _context = context;
+    private readonly IAuthService _authService;
+    private readonly IRolesService _roles;
+    public WifiDataUsageController( WifiDbContext context, IAuthService authService, 
+        IRolesService roles)
+    {
+        _context = context;
+        _authService = authService;
+        _roles = roles;
+    }
+    
 
     [HttpGet("{period}/Sum")]
     public async Task<ActionResult<IEnumerable<GetDataUsageResponseModel>>> GetSum(
@@ -26,14 +35,35 @@ public class WifiDataUsageController : ControllerBase
             !DateTime.TryParse(endDate,   out var ed))
             return BadRequest("Invalid date format.");
 
+        var auth = await _authService.SignedInAsync(Request);
+        if (auth == null || !auth.IsSignedIn())
+            return Unauthorized("You must be signed in to access this resource.");
+
+        List<GetShipIdsResponseModel> shipIds = new();
+        
+        if (shipId.HasValue)
+        {
+            if(!await _roles.IsShipIdValidAsync(shipId.Value, auth))
+                return Unauthorized("You do not have access to this ship ID.");
+        } 
+        else 
+        {
+            var shipIdsResult = await _roles.GetShipIdsAsync(auth);
+            if (shipIdsResult.Result is UnauthorizedObjectResult or NotFoundObjectResult || shipIdsResult.Value == null)
+                return shipIdsResult.Result;
+            shipIds = shipIdsResult.Value;
+        }
+        
         var start  = DateTime.SpecifyKind(sd, DateTimeKind.Utc);
         var end    = DateTime.SpecifyKind(ed, DateTimeKind.Utc).Date.AddDays(1);
         bool hourly = p == Period.Hourly;
 
         var grouped = await _context.WifiDatabase
-            .Where(x => (shipId == null || x.ShipId == shipId.Value)
-                     && x.ActivationTime >= start
-                     && x.ActivationTime <  end)
+            .Where(x => (shipId == null
+                            ? shipIds.Select(s => s.ShipId).Contains(x.ShipId)
+                            : x.ShipId == shipId.Value)
+                        && x.ActivationTime >= start
+                        && x.ActivationTime <  end)
             .GroupBy(x => new {
                 x.ActivationTime.Year,
                 x.ActivationTime.Month,
@@ -96,14 +126,35 @@ public class WifiDataUsageController : ControllerBase
             !DateTime.TryParse(endDate,   out var ed))
             return BadRequest("Invalid date format.");
 
+        var auth = await _authService.SignedInAsync(Request);
+        if (auth == null || !auth.IsSignedIn())
+            return Unauthorized("You must be signed in to access this resource.");
+
+        List<GetShipIdsResponseModel> shipIds = new();
+        
+        if (shipId.HasValue)
+        {
+            if(!await _roles.IsShipIdValidAsync(shipId.Value, auth))
+                return Unauthorized("You do not have access to this ship ID.");
+        } 
+        else 
+        {
+            var shipIdsResult = await _roles.GetShipIdsAsync(auth);
+            if (shipIdsResult.Result is UnauthorizedObjectResult or NotFoundObjectResult || shipIdsResult.Value == null)
+                return shipIdsResult.Result;
+            shipIds = shipIdsResult.Value;
+        }
+        
         var start  = DateTime.SpecifyKind(sd, DateTimeKind.Utc);
         var end    = DateTime.SpecifyKind(ed, DateTimeKind.Utc).Date.AddDays(1);
         bool hourly = p == Period.Hourly;
 
         var grouped = await _context.WifiDatabase
-            .Where(x => (shipId == null || x.ShipId == shipId.Value)
-                     && x.ActivationTime >= start
-                     && x.ActivationTime <  end)
+            .Where(x => (shipId == null
+                            ? shipIds.Select(s => s.ShipId).Contains(x.ShipId)
+                            : x.ShipId == shipId.Value)
+                        && x.ActivationTime >= start
+                        && x.ActivationTime <  end)
             .GroupBy(x => new {
                 x.ActivationTime.Year,
                 x.ActivationTime.Month,

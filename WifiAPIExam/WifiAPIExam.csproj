@@ -31,6 +31,9 @@
       <Compile Update="Services\IAuthService.cs">
         <DependentUpon>AuthService.cs</DependentUpon>
       </Compile>
+      <Compile Update="Services\IRolesService.cs">
+        <DependentUpon>RolesService.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

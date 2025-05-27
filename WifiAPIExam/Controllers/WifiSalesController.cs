@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using WifiAPIExam.Configuration;
 using WifiAPIExam.Controllers.Models;
 using WifiAPIExam.Database;
+using WifiAPIExam.Services;
 
 namespace WifiAPIExam.Controllers;
 
@@ -17,13 +20,18 @@ public class WifiDataReportController : ControllerBase
 {
     private readonly WifiDbContext _context;
     private readonly ILogger<WifiDataReportController> _logger;
+    private readonly IAuthService _authService;
+    private readonly IRolesService _roles;
 
-    public WifiDataReportController(ILogger<WifiDataReportController> logger, WifiDbContext context)
+    public WifiDataReportController(ILogger<WifiDataReportController> logger, WifiDbContext context, IAuthService authService, 
+        IRolesService roles)
     {
-        _context = context;
         _logger = logger;
+        _context = context;
+        _authService = authService;
+        _roles = roles;
     }
-
+    
     [HttpGet("{period}/Sum")]
     public async Task<ActionResult<IEnumerable<GetSalesResponseModel>>> GetSum(
         [FromRoute] string period,
@@ -38,6 +46,25 @@ public class WifiDataReportController : ControllerBase
             !DateTime.TryParse(endDate,   out var ed))
             return BadRequest("Invalid date format.");
 
+        var auth = await _authService.SignedInAsync(Request);
+        if (auth == null || !auth.IsSignedIn())
+            return Unauthorized("You must be signed in to access this resource.");
+
+        List<GetShipIdsResponseModel> shipIds = new();
+        
+        if (shipId.HasValue)
+        {
+            if(!await _roles.IsShipIdValidAsync(shipId.Value, auth))
+                return Unauthorized("You do not have access to this ship ID.");
+        } 
+        else 
+        {
+            var shipIdsResult = await _roles.GetShipIdsAsync(auth);
+            if (shipIdsResult.Result is UnauthorizedObjectResult or NotFoundObjectResult || shipIdsResult.Value == null)
+                return shipIdsResult.Result;
+            shipIds = shipIdsResult.Value;
+        }
+        
         var start = DateTime.SpecifyKind(sd, DateTimeKind.Utc);
         var end   = DateTime.SpecifyKind(ed, DateTimeKind.Utc).Date.AddDays(1);
 
@@ -45,7 +72,9 @@ public class WifiDataReportController : ControllerBase
 
         // query and group
         var grouped = await _context.WifiDatabase
-            .Where(w => (shipId == null || w.ShipId == shipId.Value)
+            .Where(w => (shipId == null
+                            ? shipIds.Select(s => s.ShipId).Contains(w.ShipId)
+                            : w.ShipId == shipId.Value)
                         && w.SellTime >= start 
                         && w.SellTime < end)
             .GroupBy(w => new {
@@ -112,13 +141,34 @@ public class WifiDataReportController : ControllerBase
             !DateTime.TryParse(endDate,   out var ed))
             return BadRequest("Invalid date format.");
 
+        var auth = await _authService.SignedInAsync(Request);
+        if (auth == null || !auth.IsSignedIn())
+            return Unauthorized("You must be signed in to access this resource.");
+
+        List<GetShipIdsResponseModel> shipIds = new();
+        
+        if (shipId.HasValue)
+        {
+            if(!await _roles.IsShipIdValidAsync(shipId.Value, auth))
+                return Unauthorized("You do not have access to this ship ID.");
+        } 
+        else 
+        {
+            var shipIdsResult = await _roles.GetShipIdsAsync(auth);
+            if (shipIdsResult.Result is UnauthorizedObjectResult or NotFoundObjectResult || shipIdsResult.Value == null)
+                return shipIdsResult.Result;
+            shipIds = shipIdsResult.Value;
+        }
+        
         var start = DateTime.SpecifyKind(sd, DateTimeKind.Utc);
         var end   = DateTime.SpecifyKind(ed, DateTimeKind.Utc).Date.AddDays(1);
 
         bool hourly = p == Period.Hourly;
 
         var grouped = await _context.WifiDatabase
-            .Where(w => (shipId == null || w.ShipId == shipId.Value)
+            .Where(w => (shipId == null
+                            ? shipIds.Select(s => s.ShipId).Contains(w.ShipId)
+                            : w.ShipId == shipId.Value)
                         && w.SellTime >= start
                         && w.SellTime <  end)
             .GroupBy(w => new {
@@ -185,13 +235,34 @@ public class WifiDataReportController : ControllerBase
             !DateTime.TryParse(endDate,   out var ed))
             return BadRequest("Invalid date format.");
 
+        var auth = await _authService.SignedInAsync(Request);
+        if (auth == null || !auth.IsSignedIn())
+            return Unauthorized("You must be signed in to access this resource.");
+
+        List<GetShipIdsResponseModel> shipIds = new();
+        
+        if (shipId.HasValue)
+        {
+            if(!await _roles.IsShipIdValidAsync(shipId.Value, auth))
+                return Unauthorized("You do not have access to this ship ID.");
+        } 
+        else 
+        {
+            var shipIdsResult = await _roles.GetShipIdsAsync(auth);
+            if (shipIdsResult.Result is UnauthorizedObjectResult or NotFoundObjectResult || shipIdsResult.Value == null)
+                return shipIdsResult.Result;
+            shipIds = shipIdsResult.Value;
+        }
+        
         var start = DateTime.SpecifyKind(sd, DateTimeKind.Utc);
         var end   = DateTime.SpecifyKind(ed, DateTimeKind.Utc).Date.AddDays(1);
 
         bool hourly = p == Period.Hourly;
 
         var grouped = await _context.WifiDatabase
-            .Where(w => (shipId == null || w.ShipId == shipId.Value)
+            .Where(w => (shipId == null
+                            ? shipIds.Select(s => s.ShipId).Contains(w.ShipId)
+                            : w.ShipId == shipId.Value)
                         && w.SellTime >= start
                         && w.SellTime < end)
             .GroupBy(w => new {
@@ -244,3 +315,4 @@ public class WifiDataReportController : ControllerBase
         return Ok(result);
     }
 }
+
