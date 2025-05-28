@@ -15,6 +15,7 @@ A .NET API for tracking and managing WiFi data usage across ships. This system p
 - [🔐 Authentication](#authentication)
 - [📂 Project Structure](#project-structure)
 - [💻 Development](#development)
+- [🔧 Troubleshooting](#troubleshooting)
 
 ## ✅ Requirements
 
@@ -175,3 +176,69 @@ Main project dependencies:
 - 🗄️ Microsoft.EntityFrameworkCore.Design (9.0.5)
 - 🐘 Npgsql.EntityFrameworkCore.PostgreSQL (9.0.4)
 - 📝 Swashbuckle.AspNetCore (8.1.1)
+
+## 🔧 Troubleshooting
+
+### 🐳 Docker Issues
+
+- **Container not starting**: 
+  ```bash
+  # View logs of the container
+  docker logs wifiapiexam
+  
+  # Ensure ports are not already in use
+  netstat -an | findstr 8080
+  netstat -an | findstr 5432
+  ```
+
+- **Database connection failures**:
+  ```bash
+  # Check if PostgreSQL container is running
+  docker ps -a | grep postgres
+  
+  # Restart the PostgreSQL container
+  docker restart wifidb
+  ```
+
+### 🔐 Authentication Issues
+
+- **Unauthorized errors**: Check that your Clerk `SecretKey` is correctly set in `appsettings.json` or environment variables.
+
+- **CORS issues**: If frontend requests are being blocked, verify that `Clerk:AllowedOrigin` matches your frontend application URL.
+
+### 📊 Data Import Issues
+
+- **No data showing up**:
+  ```bash
+  # Connect to PostgreSQL
+  docker exec -it wifidb psql -U mats -d wifidb
+  
+  # Check if data exists
+  SELECT COUNT(*) FROM "WifiDatabase";
+  ```
+  
+- **Manual data import**: If automatic data import fails, you can manually trigger the import by clearing the database and restarting the application.
+
+### 🛠️ Common Solutions
+
+- Restart both the database and application containers:
+  ```bash
+  docker compose down
+  docker compose up -d
+  ```
+
+- Reset the database completely:
+  ```bash
+  # Connect to PostgreSQL
+  docker exec -it wifidb psql -U mats -d wifidb
+  
+  # Inside PostgreSQL console
+  TRUNCATE TABLE "WifiDatabase" RESTART IDENTITY;
+  TRUNCATE TABLE "ShipIds" RESTART IDENTITY;
+  ```
+
+- Check application logs:
+  ```bash
+  docker logs -f wifiapiexam
+  ```
+
