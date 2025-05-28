@@ -6,7 +6,8 @@ A .NET API for tracking and managing WiFi data usage across ships. This system p
 
 - [✅ Requirements](#requirements)
 - [🛠️ Setup](#setup)
-  - [💾 Database Setup](#database-setup)
+  - [🐳 Docker Compose Setup (Recommended)](#docker-compose-setup-recommended)
+  - [💾 Manual Database Setup](#manual-database-setup)
   - [⚙️ Configuration](#configuration)
 - [▶️ Running the Application](#running-the-application)
 - [🔌 API Endpoints](#api-endpoints)
@@ -23,7 +24,25 @@ A .NET API for tracking and managing WiFi data usage across ships. This system p
 
 ## 🛠️ Setup
 
-### 💾 Database Setup
+### 🐳 Docker Compose Setup (Recommended)
+
+The easiest way to get started is using Docker Compose, which automatically sets up both the database and the application:
+
+```bash
+docker compose up -d
+```
+
+This will:
+- 📊 Start a PostgreSQL database container
+- 🚀 Build and start the WifiAPIExam application
+- 🔄 Configure all connection strings and environment variables
+- ⚡ Make the API available at http://localhost:8080
+
+No additional setup is required with this method!
+
+### 💾 Manual Database Setup
+
+If you prefer to set up components individually:
 
 1. Start the PostgreSQL database using Docker:
 
@@ -95,7 +114,7 @@ docker run -p 8080:80 wifiapi
 
 The application provides several endpoints for retrieving WiFi data:
 
-- **📊 GET /Wifi/DataUsage/{period}/Sum** - Get summarized WiFi data usage by period
+- **📊 GET /Wifi/DataUsage** - Get summarized WiFi data usage by period
 - **💰 GET /Wifi/Sales** - Get sales information
 - **🛳️ GET /Wifi/ShipIds** - Get available ship IDs
 
@@ -126,6 +145,10 @@ This application uses Clerk for authentication. API requests must include a vali
 ### 📥 Data Import
 
 The application automatically imports WiFi usage data from the `wifi-usage-2025-04` directory on startup if the database is empty.
+
+> ⚠️ **Important**: The `wifi-usage-2025-04` directory containing sample data files is not included in the GitHub repository. You will need to create this directory manually and add the appropriate JSON data files before running the application for the first time, unless you have existing data in the database.
+
+Format of the WiFi data files should be JSON files named in the format `2025-04_{shipId}.json` placed in the `wifi-usage-2025-04` directory.
 
 ### 🧰 Useful Commands
 
