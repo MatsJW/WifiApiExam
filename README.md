@@ -73,15 +73,11 @@ dotnet ef database update
 
 ### 📥 Sample Data
 
-The application automatically imports WiFi usage data from the `wifi-usage-2025-04` directory on startup if the database is empty. Sample data files are already included in the repository under `WifiAPIExam/wifi-usage-2025-04/` with files like:
-- `2025-04_123896564.json`
-- `2025-04_678092675.json`
-- `2025-04_678345120.json`
-- And more...
+Sample data files are **not** included in the repository by default. To test the application with sample data, you need to provide your own files in the `WifiAPIExam/wifi-usage-2025-04/` directory, following the naming format:
 
-These files contain sample WiFi usage data that will be imported into the database when the application first runs. If you're using Docker Compose, this import happens automatically during the container startup process.
+- `2025-04_{shipId}.json`
 
-If you need to use your own data files, they should follow the naming format `2025-04_{shipId}.json` and be placed in the `wifi-usage-2025-04` directory.
+These files should contain WiFi usage data and will be imported into the database when the application first runs (if the database is empty).
 
 ### ⚙️ Configuration
 
