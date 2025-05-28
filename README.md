@@ -8,6 +8,7 @@ A .NET API for tracking and managing WiFi data usage across ships. This system p
 - [🛠️ Setup](#setup)
   - [🐳 Docker Compose Setup (Recommended)](#docker-compose-setup-recommended)
   - [💾 Manual Database Setup](#manual-database-setup)
+  - [📥 Sample Data](#sample-data)
   - [⚙️ Configuration](#configuration)
 - [▶️ Running the Application](#running-the-application)
 - [🔌 API Endpoints](#api-endpoints)
@@ -68,6 +69,18 @@ cd WifiAPIExam
 dotnet ef migrations add InitialCreate # Only if migrations don't exist
 dotnet ef database update
 ```
+
+### 📥 Sample Data
+
+The application automatically imports WiFi usage data from the `wifi-usage-2025-04` directory on startup if the database is empty. Sample data files are already included in the repository under `WifiAPIExam/wifi-usage-2025-04/` with files like:
+- `2025-04_123896564.json`
+- `2025-04_678092675.json`
+- `2025-04_678345120.json`
+- And more...
+
+These files contain sample WiFi usage data that will be imported into the database when the application first runs. If you're using Docker Compose, this import happens automatically during the container startup process.
+
+If you need to use your own data files, they should follow the naming format `2025-04_{shipId}.json` and be placed in the `wifi-usage-2025-04` directory.
 
 ### ⚙️ Configuration
 
@@ -141,14 +154,6 @@ This application uses Clerk for authentication. API requests must include a vali
 - **⚙️ Configuration/**: Application configuration classes
 
 ## 💻 Development
-
-### 📥 Data Import
-
-The application automatically imports WiFi usage data from the `wifi-usage-2025-04` directory on startup if the database is empty.
-
-> ⚠️ **Important**: The `wifi-usage-2025-04` directory containing sample data files is not included in the GitHub repository. You will need to create this directory manually and add the appropriate JSON data files before running the application for the first time, unless you have existing data in the database.
-
-Format of the WiFi data files should be JSON files named in the format `2025-04_{shipId}.json` placed in the `wifi-usage-2025-04` directory.
 
 ### 🧰 Useful Commands
 
