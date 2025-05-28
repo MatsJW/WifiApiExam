@@ -30,7 +30,7 @@ public class ImportService :IImportService
             // Read the entire JSON file
             var fileContent = await File.ReadAllTextAsync(filePath);
 
-            // Deserialize the JSON array into a List<Prices> using custom options
+            // Deserialize the JSON array into a List<WifiDataModelDto> using custom options
             var wifiDataDtos = JsonSerializer.Deserialize<List<WifiDataModelDto>>(fileContent);
 
             if (wifiDataDtos is null)
@@ -43,8 +43,14 @@ public class ImportService :IImportService
             var wifiData = wifiDataDtos
                 .Select(dto => dto.MapToModel())
                 .ToList();
-            allShipIds.UnionWith(wifiData.Select(w => w.ShipId));
+
+            if (wifiData == null || !wifiData.Any())
+            {
+                _logger.LogWarning($"No valid data found in file: {fileName}. Skipping import.");
+                continue; // Skip if no valid data was found
+            }
             
+            allShipIds.UnionWith(wifiData.Select(w => w.ShipId));
             // Add all new records to EF Core tracking
             _context.WifiDatabase.AddRange(wifiData);
         }
