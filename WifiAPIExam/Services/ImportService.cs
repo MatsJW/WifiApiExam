@@ -5,15 +5,15 @@ using WifiAPIExam.Models;
 
 namespace WifiAPIExam.Services;
 
-public class ImportService :IImportService
+public class ImportService : IImportService
 {
-    private readonly Database.WifiDbContext _context;
+    private readonly IWifiRepository _repository;
     private readonly ILogger<ImportService> _logger;
 
-    public ImportService(Database.WifiDbContext context , ILogger<ImportService> logger)
+    public ImportService(IWifiRepository repository, ILogger<ImportService> logger)
     {
         _logger = logger;
-        _context = context;
+        _repository = repository;
     }
     
     public async Task ImportFromDirectoryAsync(string directoryPath)
@@ -31,7 +31,16 @@ public class ImportService :IImportService
             var fileContent = await File.ReadAllTextAsync(filePath);
 
             // Deserialize the JSON array into a List<WifiDataModelDto> using custom options
-            var wifiDataDtos = JsonSerializer.Deserialize<List<WifiDataModelDto>>(fileContent);
+            List<WifiDataModelDto>? wifiDataDtos;
+            try
+            {
+                wifiDataDtos = JsonSerializer.Deserialize<List<WifiDataModelDto>>(fileContent);
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogWarning($"Failed to deserialize file: {fileName}. Error: {ex.Message}");
+                continue; // Skip if deserialization failed
+            }
 
             if (wifiDataDtos is null)
             {
@@ -51,21 +60,27 @@ public class ImportService :IImportService
             }
             
             allShipIds.UnionWith(wifiData.Select(w => w.ShipId));
-            // Add all new records to EF Core tracking
-            _context.WifiDatabase.AddRange(wifiData);
+            // Add all new records
+            await _repository.AddWifiDataRangeAsync(wifiData);
         }
 
-        // Insert new ShipIds into ShipIds table
-        var existingIds = await _context.ShipIds
-            .Where(s => allShipIds.Contains(s.ShipId))
-            .Select(s => s.ShipId)
-            .ToListAsync();
-        var newIds = allShipIds.Except(existingIds)
-            .Select(id => new WifiShipEntity { ShipId = id });
-        _context.ShipIds.AddRange(newIds);
+        if (allShipIds.Count > 0)
+        {
+            // Get existing ship IDs from the repository
+            var existingIds = await _repository.GetExistingShipIdsAsync(allShipIds);
+            
+            // Find new ship IDs that don't exist yet
+            var newIds = allShipIds.Except(existingIds).ToList();
+            
+            if (newIds.Any())
+            {
+                // Add new ship IDs
+                await _repository.AddShipIdsAsync(newIds);
+            }
+        }
 
         // Save changes to the database
-        await _context.SaveChangesAsync();
+        await _repository.SaveChangesAsync();
     }
 }
 

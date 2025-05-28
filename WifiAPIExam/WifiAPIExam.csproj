@@ -34,6 +34,9 @@
       <Compile Update="Services\IRolesService.cs">
         <DependentUpon>RolesService.cs</DependentUpon>
       </Compile>
+      <Compile Update="Services\IWifiRepository.cs">
+        <DependentUpon>WifiRepository.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

@@ -38,6 +38,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<IImportService, ImportService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRolesService, RolesService>();  
+builder.Services.AddScoped<IWifiRepository, WifiRepository>();  
 
 var app = builder.Build();
 
@@ -72,3 +73,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
