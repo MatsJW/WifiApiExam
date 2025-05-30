@@ -73,13 +73,14 @@ public class WifiDataReportController : ControllerBase
             .Where(w => (shipId == null
                             ? shipIds.Select(s => s.ShipId).Contains(w.ShipId)
                             : w.ShipId == shipId.Value)
+                        && w.SellTime.HasValue
                         && w.SellTime >= start 
                         && w.SellTime < end)
             .GroupBy(w => new {
-                w.SellTime.Year,
-                w.SellTime.Month,
-                w.SellTime.Day,
-                Hour = hourly ? w.SellTime.Hour : 0
+                Year = w.SellTime.Value.Year,
+                Month = w.SellTime.Value.Month,
+                Day = w.SellTime.Value.Day,
+                Hour = hourly ? w.SellTime.Value.Hour : 0
             })
             .Select(g => new {
                 g.Key.Year,
@@ -167,13 +168,14 @@ public class WifiDataReportController : ControllerBase
             .Where(w => (shipId == null
                             ? shipIds.Select(s => s.ShipId).Contains(w.ShipId)
                             : w.ShipId == shipId.Value)
+                        && w.SellTime.HasValue
                         && w.SellTime >= start
                         && w.SellTime <  end)
             .GroupBy(w => new {
-                w.SellTime.Year,
-                w.SellTime.Month,
-                w.SellTime.Day,
-                Hour = hourly ? w.SellTime.Hour : 0
+                Year = w.SellTime.Value.Year,
+                Month = w.SellTime.Value.Month,
+                Day = w.SellTime.Value.Day,
+                Hour = hourly ? w.SellTime.Value.Hour : 0
             })
             .Select(g => new {
                 g.Key.Year,
@@ -261,13 +263,14 @@ public class WifiDataReportController : ControllerBase
             .Where(w => (shipId == null
                             ? shipIds.Select(s => s.ShipId).Contains(w.ShipId)
                             : w.ShipId == shipId.Value)
+                        && w.SellTime.HasValue
                         && w.SellTime >= start
                         && w.SellTime < end)
             .GroupBy(w => new {
-                w.SellTime.Year,
-                w.SellTime.Month,
-                w.SellTime.Day,
-                Hour = hourly ? w.SellTime.Hour : 0
+                Year = w.SellTime.Value.Year,
+                Month = w.SellTime.Value.Month,
+                Day = w.SellTime.Value.Day,
+                Hour = hourly ? w.SellTime.Value.Hour : 0
             })
             .Select(g => new {
                 g.Key.Year,

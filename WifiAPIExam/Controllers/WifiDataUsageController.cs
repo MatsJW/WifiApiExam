@@ -62,13 +62,14 @@ public class WifiDataUsageController : ControllerBase
             .Where(x => (shipId == null
                             ? shipIds.Select(s => s.ShipId).Contains(x.ShipId)
                             : x.ShipId == shipId.Value)
+                        && x.ActivationTime.HasValue
                         && x.ActivationTime >= start
-                        && x.ActivationTime <  end)
+                        && x.ActivationTime < end)
             .GroupBy(x => new {
-                x.ActivationTime.Year,
-                x.ActivationTime.Month,
-                x.ActivationTime.Day,
-                Hour = hourly ? x.ActivationTime.Hour : 0
+                Year = x.ActivationTime.Value.Year,
+                Month = x.ActivationTime.Value.Month,
+                Day = x.ActivationTime.Value.Day,
+                Hour = hourly ? x.ActivationTime.Value.Hour : 0
             })
             .Select(g => new {
                 g.Key.Year,
@@ -153,13 +154,14 @@ public class WifiDataUsageController : ControllerBase
             .Where(x => (shipId == null
                             ? shipIds.Select(s => s.ShipId).Contains(x.ShipId)
                             : x.ShipId == shipId.Value)
+                        && x.ActivationTime.HasValue
                         && x.ActivationTime >= start
                         && x.ActivationTime <  end)
             .GroupBy(x => new {
-                x.ActivationTime.Year,
-                x.ActivationTime.Month,
-                x.ActivationTime.Day,
-                Hour = hourly ? x.ActivationTime.Hour : 0
+                Year = x.ActivationTime.Value.Year,
+                Month = x.ActivationTime.Value.Month,
+                Day = x.ActivationTime.Value.Day,
+                Hour = hourly ? x.ActivationTime.Value.Hour : 0
             })
             .Select(g => new {
                 g.Key.Year,
@@ -204,3 +206,4 @@ public class WifiDataUsageController : ControllerBase
         return Ok(result);
     }
 }
+

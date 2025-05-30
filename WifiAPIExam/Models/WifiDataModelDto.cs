@@ -70,14 +70,15 @@ public class WifiDataModelDto
         };
     }
 
-    private static DateTime ParseDateTimeOrDefault(string value)
+    private static DateTime? ParseDateTimeOrDefault(string value)
     {
         if (DateTime.TryParse(value, out var dt))
         {
             return DateTime.SpecifyKind(dt, DateTimeKind.Utc);
         }
 
-        return DateTime.SpecifyKind(DateTime.MinValue, DateTimeKind.Utc);
+        // Return null if parsing fails
+        return null;
     }
 }
 

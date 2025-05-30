@@ -7,8 +7,8 @@ public class WifiDataEntity
     [Key]
     public int VoucherId { get; set; }
     public int ShipId { get; set; }
-    public DateTime SellTime { get; set; }
-    public DateTime ActivationTime { get; set; }
+    public DateTime? SellTime { get; set; }
+    public DateTime? ActivationTime { get; set; }
     public decimal Price { get; set; }
     public string Currency { get; set; }
     public string Billing { get; set; }
@@ -22,9 +22,9 @@ public class WifiDataEntity
     public decimal Fees { get; set; }
     public decimal PriceNok { get; set; }
     public int RefundNok { get; set; }
-    public DateTime RefundTime { get; set; }
+    public DateTime? RefundTime { get; set; }
     public string VatCountry { get; set; }
-    public DateTime UpdatedTime { get; set; }
+    public DateTime? UpdatedTime { get; set; }
     public string DepartureCc { get; set; }
     public string DestinationCc { get; set; } 
     public string ActivationCc { get; set; }
@@ -61,3 +61,4 @@ public class WifiDataEntity
 // "UniqueThisMonth": 0,
 // "Completed": "1"
 // },
+
