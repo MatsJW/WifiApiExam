@@ -13,7 +13,7 @@ public enum Period
 }
 
 [ApiController]
-[Route("Wifi/Sales")]
+[Route("Wifi/Sales/{frequency}")]
 public class WifiDataReportController : ControllerBase
 {
     private readonly WifiDbContext _context;
@@ -30,14 +30,14 @@ public class WifiDataReportController : ControllerBase
         _roles = roles;
     }
     
-    [HttpGet("{period}/Sum")]
+    [HttpGet("Sum")]
     public async Task<ActionResult<IEnumerable<GetSalesResponseModel>>> GetSum(
-        [FromRoute] string period,
+        [FromRoute] string frequency,
         [FromQuery] string startDate,
         [FromQuery] string endDate,
         [FromQuery] int? shipId = null)
     {
-        if (!Enum.TryParse<Period>(period, true, out var p))
+        if (!Enum.TryParse<Period>(frequency, true, out var p))
             return BadRequest("Invalid period");
 
         if (!DateTime.TryParse(startDate, out var sd) ||
@@ -125,14 +125,14 @@ public class WifiDataReportController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("{period}/Count")]
+    [HttpGet("Count")]
     public async Task<ActionResult<IEnumerable<GetSalesResponseModel>>> GetCount(
-        [FromRoute] string period,
+        [FromRoute] string frequency,
         [FromQuery] string startDate,
         [FromQuery] string endDate,
         [FromQuery] int? shipId)
     {
-        if (!Enum.TryParse<Period>(period, true, out var p))
+        if (!Enum.TryParse<Period>(frequency, true, out var p))
             return BadRequest("Invalid period");
 
         if (!DateTime.TryParse(startDate, out var sd) ||
@@ -219,14 +219,14 @@ public class WifiDataReportController : ControllerBase
         return Ok(result);
     }
     
-    [HttpGet("{period}/Average")]
+    [HttpGet("Average")]
     public async Task<ActionResult<IEnumerable<GetSalesResponseModel>>> GetAverage(
-        [FromRoute] string period,
+        [FromRoute] string frequency,
         [FromQuery] string startDate,
         [FromQuery] string endDate,
         [FromQuery] int? shipId = null)
     {
-        if (!Enum.TryParse<Period>(period, true, out var p))
+        if (!Enum.TryParse<Period>(frequency, true, out var p))
             return BadRequest("Invalid period");
 
         if (!DateTime.TryParse(startDate, out var sd) ||

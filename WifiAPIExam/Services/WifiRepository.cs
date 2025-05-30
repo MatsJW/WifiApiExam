@@ -6,6 +6,7 @@ namespace WifiAPIExam.Services;
 
 public class WifiRepository : IWifiRepository
 {
+    // made to make testing easier
     private readonly WifiDbContext _context;
     
     public WifiRepository(WifiDbContext context)

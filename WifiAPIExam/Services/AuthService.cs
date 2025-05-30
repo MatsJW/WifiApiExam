@@ -23,8 +23,6 @@ public class AuthService : IAuthService
 
         var requestState = await AuthenticateRequest.AuthenticateRequestAsync(request, options);
         
-        
-        
         return requestState;
     }
 }

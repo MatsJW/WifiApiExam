@@ -7,7 +7,7 @@ using WifiAPIExam.Services;
 namespace WifiAPIExam.Controllers;
 
 [ApiController]
-[Route("Wifi/DataUsage")]
+[Route("Wifi/DataUsage/{frequency}")]
 public class WifiDataUsageController : ControllerBase
 {
     private readonly WifiDbContext _context;
@@ -22,14 +22,14 @@ public class WifiDataUsageController : ControllerBase
     }
     
 
-    [HttpGet("{period}/Sum")]
+    [HttpGet("Sum")]
     public async Task<ActionResult<IEnumerable<GetDataUsageResponseModel>>> GetSum(
-        [FromRoute] string period,
+        [FromRoute] string frequency,
         [FromQuery] string startDate,
         [FromQuery] string endDate,
         [FromQuery] int? shipId = null)
     {
-        if (!Enum.TryParse<Period>(period, true, out var p))
+        if (!Enum.TryParse<Period>(frequency, true, out var p))
             return BadRequest("Invalid period");
         if (!DateTime.TryParse(startDate, out var sd) ||
             !DateTime.TryParse(endDate,   out var ed))
@@ -113,14 +113,14 @@ public class WifiDataUsageController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("{period}/Average")]
+    [HttpGet("Average")]
     public async Task<ActionResult<IEnumerable<GetDataUsageResponseModel>>> GetAverage(
-        [FromRoute] string period,
+        [FromRoute] string frequency,
         [FromQuery] string startDate,
         [FromQuery] string endDate,
         [FromQuery] int? shipId = null)
     {
-        if (!Enum.TryParse<Period>(period, true, out var p))
+        if (!Enum.TryParse<Period>(frequency, true, out var p))
             return BadRequest("Invalid period");
         if (!DateTime.TryParse(startDate, out var sd) ||
             !DateTime.TryParse(endDate,   out var ed))

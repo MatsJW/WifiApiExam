@@ -53,7 +53,7 @@ public class ImportService : IImportService
                 .Select(dto => dto.MapToModel())
                 .ToList();
 
-            if (wifiData == null || !wifiData.Any())
+            if (wifiData == null || wifiData.Count == 0)
             {
                 _logger.LogWarning($"No valid data found in file: {fileName}. Skipping import.");
                 continue; // Skip if no valid data was found

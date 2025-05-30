@@ -42,7 +42,7 @@ This will:
 
 No additional setup is required with this method!
 
-### 💾 Manual Database Setup
+### 💾 Manual Database Setup (Development)
 
 If you prefer to set up components individually:
 
