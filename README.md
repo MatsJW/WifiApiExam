@@ -58,13 +58,12 @@ docker run --name wifidb -e POSTGRES_USER=mats -e POSTGRES_PASSWORD=mats -e POST
 docker exec -it wifidb psql -U mats -d wifidb
 ```
 
-3. Navigate to the project directory:
+
+3. Run the Entity Framework migrations to set up the database schema (onky if migrations don't exist):
 
 ```bash
 cd WifiAPIExam
 ```
-
-4. Run the Entity Framework migrations to set up the database schema:
 
 ```bash
 dotnet ef migrations add InitialCreate # Only if migrations don't exist
@@ -237,4 +236,7 @@ Main project dependencies:
   ```bash
   docker logs -f wifiapiexam
   ```
+
+
+
 
